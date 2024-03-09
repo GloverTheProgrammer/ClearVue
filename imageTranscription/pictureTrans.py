@@ -56,7 +56,6 @@ def encode_image(image_path):
         encoded_string = base64.b64encode(image_file.read())
     return encoded_string.decode('utf-8')
 
-base64_image = encode_image(image_path)
 
 def classify(base64_image, api_key):
     headers = {
@@ -92,8 +91,9 @@ def classify(base64_image, api_key):
     except Exception as e:
         print(e)
 
-if button_press(0):
+if button_press():
     save_image()
+    base64_image = encode_image(image_path)
     classify(base64_image, api_key)
     
 
