@@ -3,3 +3,4 @@ torchvision
 torchaudio
 opencv-python
 numpy
+transformers
