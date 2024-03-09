@@ -36,7 +36,7 @@ def button_press():
         time.sleep(0.1)
 
 
-def save_image(directory="/home/blackhatDesktop/transcribe/"):
+def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     # Create the directory if it doesn't exist
     
     cam = cv2.VideoCapture(0)
