@@ -3,42 +3,52 @@ import base64
 from openai import OpenAI
 import requests
 import cv2
+import time
+import RPi.GPIO as GPIO
+
 
 
 api_key="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"
 
-image_path = "/home/blackhat/Desktop/transcribe/opencv_frame_0.png"
+image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
+
+
+def button_press():
+    BUTTON_GPIO = 16
+    DELAY = 500
+    last_ms = 0
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    pressed = False
+
+    while True:
+        # button is pressed when pin is LOW
+        if not GPIO.input(BUTTON_GPIO):
+            if not pressed and (time.time() * 1000 - last_ms > DELAY):
+                print("Button pressed!")
+                pressed = True
+                last_ms = time.time() * 1000
+                return True
+        # button not pressed (or released)
+        else:
+            pressed = False
+        time.sleep(0.1)
+
 
 def save_image(directory="/home/blackhatDesktop/transcribe/"):
     # Create the directory if it doesn't exist
     
     cam = cv2.VideoCapture(0)
-    cv2.namedWindow("test")
-    img_counter = 0
+    cv2.namedWindow("save")
 
-    while True:
-        ret, frame = cam.read()
-        if not ret:
-            print("Failed to grab frame")
-            break
-        cv2.imshow("test", frame)
-
-        k = cv2.waitKey(1)
-        if k%256 == 27:
-            # ESC pressed
-            print("Escape hit, closing...")
-            break
-        elif k%256 == 32:
-            # SPACE pressed
-            img_name = os.path.join(directory, f"opencv_frame_{img_counter}.png")
-            cv2.imwrite(img_name, frame)
-            print(f"{img_name} written!")
-            img_counter += 1
+    img_name = os.path.join(directory, f"opencv_frame.png")
+    cv2.imwrite(img_name, frame)
+    print(f"{img_name} written!")
 
     cam.release()
     cv2.destroyAllWindows()
 
-save_image()
 
 
 def encode_image(image_path):
@@ -82,6 +92,9 @@ def classify(base64_image, api_key):
     except Exception as e:
         print(e)
 
-classify(base64_image, api_key)
+if button_press(0):
+    save_image()
+    classify(base64_image, api_key)
+    
 
 

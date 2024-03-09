@@ -1,11 +1,12 @@
 import time
 import RPi.GPIO as GPIO
 
-BUTTON_GPIO = 16
-DELAY = 500
-last_ms = 0
 
-if __name__ == '__main__':
+
+def button_press():
+    BUTTON_GPIO = 16
+    DELAY = 500
+    last_ms = 0
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
