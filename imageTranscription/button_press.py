@@ -30,13 +30,17 @@ def button_press():
                 held = True
                 if mode == 2:
                     mode = 0
-                else
+                else:
                     mode = mode + 1
                 print(mode)
-
+                if(mode == 1):
+                    return 1 # Current implementation 
+                if(mode == 2):
+                    return 2 # Reading Labels
         else:
             if pressed and not held:
                 print("pressed")
+                return 0 # Describe closest item
             pressed = False
             held = False
         time.sleep(0.1)
