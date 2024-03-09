@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 
 
 
-api_key="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"
+api_key="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"
 
 image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 

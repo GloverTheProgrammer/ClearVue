@@ -2,9 +2,8 @@ import cv2
 import os
 
 
-def save_image(directory="/home/blackhatDesktop/transcribe/"):
+def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     # Create the directory if it doesn't exist
-    
     cam = cv2.VideoCapture(0)
 
     if not cam.isOpened():
