@@ -8,12 +8,13 @@ from torchvision import transforms, models
 from labels import classes
 
 torch.backends.quantized.engine = 'qnnpack'
-net = models.quantization.mobilenet_v3_large(pretrained=True, quantize=True)
+net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
 net = torch.jit.script(net)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
+cap.set(cv2.CAP_PROP_FPS, 36)
 
 preprocess = transforms.Compose([
     transforms.ToTensor(),
@@ -33,7 +34,7 @@ with torch.no_grad():
 
         # Preprocess without converting to RGB
         # Convert BGR to RGB here
-        input_tensor = preprocess(frame[..., ::-1].copy())
+        input_tensor = preprocess(frame[:, :, [2, 1, 0]])
         input_batch = input_tensor.unsqueeze(0)
         output = net(input_batch)
 
