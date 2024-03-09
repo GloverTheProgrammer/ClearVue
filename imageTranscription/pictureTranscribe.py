@@ -41,6 +41,9 @@ def save_image(directory="/home/blackhatDesktop/transcribe/"):
     
     cam = cv2.VideoCapture(0)
 
+    if not cam.isOpened():
+        raise IOError("Cannot open webcam")
+
     ret, frame = cam.read()
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
