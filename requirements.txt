@@ -1,5 +1,2 @@
-os
-base64
 openai
-requests
-cv2
+opencv-python
