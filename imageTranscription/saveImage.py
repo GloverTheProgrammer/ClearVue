@@ -19,3 +19,12 @@ def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     print(f"{img_name} written!")
 
     cam.release()
+
+from dotenv import load_dotenv
+
+
+
+load_dotenv()  # Loads the .env file into environment variables
+api_key = os.getenv('OPENAI_API_KEY')
+
+print(api_key)
