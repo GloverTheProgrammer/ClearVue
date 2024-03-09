@@ -6,7 +6,7 @@ import requests
 
 api_key="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"
 
-image_path = "/Users/redap/Desktop/IMG_4350.png"
+image_path = "/home/blackhat/Desktop/transcribe/opencv_frame_0.png"
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
