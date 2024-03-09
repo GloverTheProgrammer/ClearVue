@@ -4,10 +4,13 @@ import torch
 import cv2
 import numpy as np
 
+# Define the path where the model is saved
+model_path = "models/yolos-tiny"
+
 # Load the processor and model with torch.device for optimization on Raspberry Pi
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-processor = YolosImageProcessor.from_pretrained("hustvl/yolos-tiny")
-model = YolosForObjectDetection.from_pretrained("hustvl/yolos-tiny").to(device)
+processor = YolosImageProcessor.from_pretrained(model_path)
+model = YolosForObjectDetection.from_pretrained(model_path).to(device)
 
 def draw_boxes_with_labels(image, results, id2label):
     draw = ImageDraw.Draw(image)
@@ -33,10 +36,10 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-    
+
     processed_frame = process_frame(frame)
     cv2.imshow('Video with Boxes and Labels', processed_frame)
-    
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
