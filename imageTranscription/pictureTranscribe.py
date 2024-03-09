@@ -63,8 +63,7 @@ def encode_image(image_path):
     return encoded_string.decode('utf-8')
 
 
-def classify(base64_image):
-    api_key="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"
+def classify(base64_image, api_key):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}",
@@ -101,7 +100,7 @@ def classify(base64_image):
 if button_press():
     save_image()
     base64_image = encode_image(image_path)
-    classify(base64_image)
+    classify(base64_image, api_key)
     
 
 
