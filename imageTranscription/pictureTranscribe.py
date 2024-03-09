@@ -5,10 +5,11 @@ import requests
 import cv2
 import time
 import RPi.GPIO as GPIO
+from dotenv import load_dotenv
 
 
-
-api_key="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"
+load_dotenv()  # Loads the .env file into environment variables
+api_key = os.getenv('OPENAI_API_KEY')
 
 image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 
@@ -36,7 +37,7 @@ def button_press():
         time.sleep(0.1)
 
 
-def save_image(directory="/home/blackhatDesktop/transcribe/"):
+def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     # Create the directory if it doesn't exist
     
     cam = cv2.VideoCapture(0)
