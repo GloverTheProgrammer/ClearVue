@@ -42,7 +42,7 @@ def save_image(directory="/home/blackhatDesktop/transcribe/"):
     cam = cv2.VideoCapture(0)
 
     img_name = os.path.join(directory, f"opencv_frame.png")
-    cv2.imwrite(img_name, frame)
+    cv2.imwrite(img_name)
     print(f"{img_name} written!")
 
     cam.release()
