@@ -11,7 +11,7 @@ torch.backends.quantized.engine = 'qnnpack'
 net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
 net = torch.jit.script(net)
 
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
 cap.set(cv2.CAP_PROP_FPS, 36)
