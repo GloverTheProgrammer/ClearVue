@@ -9,6 +9,8 @@ from openai import OpenAI
 import sounddevice as sd
 import soundfile as sf
 import base64
+import cProfile
+import pstats
 
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
@@ -151,5 +153,12 @@ def main():
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
+    profiler = cProfile.Profile()
+    profiler.enable()
+
     main()
+
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats('cumtime')
+    stats.print_stats()
 
