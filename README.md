@@ -1,6 +1,7 @@
 # LogoClearVue: Redefining Sight, One Hat at a Time
 
-![ClearVue](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/8e2674bb-d17b-47b0-98b1-b019242b8165)
+![ClearVue](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/578a8c82-ff94-442d-acab-30aa8d175561)
+
 
 
 ## Empowering Vision
