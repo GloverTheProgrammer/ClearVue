@@ -14,7 +14,7 @@ image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 system_ready = True
 
 
-def button_press():
+def button_press(base_mode):
     BUTTON_GPIO = 16
     DELAY = 500
     HOLD = 2200
@@ -22,7 +22,7 @@ def button_press():
     start_ms = 0
     start_press_ms = 0
 
-    mode = 0
+    mode = base_mode
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -107,10 +107,12 @@ def classify_image(base64_image, api_key, mode):
 
 def main():
     global system_ready
+    base_mode = 0
 
     while True:
         if system_ready:
-            mode = button_press()  # Check for button press or hold
+            mode = button_press(base_mode)  # Check for button press or hold
+            base_mode = mode
             system_ready = False  # Prevent further actions
             save_image()
             base64_image = encode_image(image_path)
