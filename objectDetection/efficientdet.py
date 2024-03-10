@@ -75,6 +75,7 @@ class ObjectDetectionStreamer:
                 for _ in range(self.skip_frames):
                     cap.grab()
                 processed_frame, summary = self.process_frame(frame)
+                print(summary)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
