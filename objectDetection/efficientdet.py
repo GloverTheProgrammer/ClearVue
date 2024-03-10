@@ -10,7 +10,7 @@ import pygame
 import pygame.mixer
 import tempfile
 from gtts import gTTS
-from threading import Thread
+import threading
 import time
 import RPi.GPIO as GPIO
 
@@ -18,7 +18,7 @@ import os
 import sys
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
-stream_stop_event = Thread.Event()
+stream_stop_event = threading.Event()
 
 def monitor_button():
     BUTTON_GPIO = 16
@@ -32,8 +32,7 @@ def monitor_button():
         time.sleep(0.1)  # Debounce delay
 
 def button_press():
-    monitor_button()
-    monitor_button_thread = Thread.Thread(target=monitor_button)
+    monitor_button_thread = threading.Thread(target=monitor_button)
     monitor_button_thread.start()
     monitor_button_thread.join()
     stream_stop_event.set()
@@ -184,10 +183,10 @@ class ObjectDetectionStreamer:
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pygame.time.Clock().tick(10)
-        Thread(target=play_audio, args=(file_path,)).start()
+        threading.Thread(target=play_audio, args=(file_path,)).start()
 
     def main():
-        button_thread = Thread(target=button_press)
+        button_thread = threading.Thread(target=button_press)
         button_thread.start()
         model_path = os.path.join(
             project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
