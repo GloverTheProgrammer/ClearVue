@@ -5,7 +5,7 @@ import cv2
 import time
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
-import OpenAI
+from openai import OpenAI
 
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
