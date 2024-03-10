@@ -18,6 +18,7 @@ import os
 import sys
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
+
 stream_stop_event = threading.Event()
 
 def monitor_button():
@@ -106,8 +107,7 @@ class ObjectDetectionStreamer:
                 processed_frame, summary = self.process_frame(frame)
                 print(summary)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    stream_stop_event.set()
+                if cv2.waitKey(1) & 0xFF == ord('q') or stream_stop_event.is_set():
                     break
                 if not self.text_to_speech:
                     continue
