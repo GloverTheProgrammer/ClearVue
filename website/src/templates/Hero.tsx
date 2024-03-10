@@ -12,12 +12,6 @@ const Hero = () => (
     <Section yPadding="py-6">
       <NavbarTwoColumns logo={<Logo xl />}>
         <li>
-          <Link href="https://github.com/GloverTheProgrammer/ClearVue">
-            GitHub
-          </Link>
-        </li>
-        <li>
-          <Link href="/">About Us</Link>
         </li>
       </NavbarTwoColumns>
     </Section>
@@ -27,14 +21,14 @@ const Hero = () => (
         title={
           <>
             <span className="text-[#F0CD6C]">
-              See Beyond Sight with Every Brim
-            </span>
+              Redefining Sight, One Hat at a Time
+              </span>
           </>
         }
         description="Enabling the visually impaired to see"
         button={
-          <Link href="https://creativedesignsguru.com/category/nextjs/">
-            <Button xl>Learn more</Button>
+          <Link href="https://github.com/GloverTheProgrammer/ClearVue">
+            <Button xl>View our GitHub!</Button>
           </Link>
         }
       />

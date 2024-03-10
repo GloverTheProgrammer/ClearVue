@@ -57,18 +57,6 @@ const Footer = () => (
         }
       >
         <li>
-          <Link href="/">Home</Link>
-        </li>
-        <li>
-          <Link href="/">About</Link>
-        </li>
-        <li>
-          <Link href="/">Docs</Link>
-        </li>
-        <li>
-          <Link href="https://github.com/GloverTheProgrammer/ClearVue">
-            GitHub
-          </Link>
         </li>
       </CenteredFooter>
     </Section>
