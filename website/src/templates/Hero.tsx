@@ -12,12 +12,12 @@ const Hero = () => (
     <Section yPadding="py-6">
       <NavbarTwoColumns logo={<Logo xl />}>
         <li>
-          <Link href="https://github.com/ixartz/Next-JS-Landing-Page-Starter-Template">
+          <Link href="https://github.com/GloverTheProgrammer/ClearVue">
             GitHub
           </Link>
         </li>
         <li>
-          <Link href="/">Sign in</Link>
+          <Link href="/">About Us</Link>
         </li>
       </NavbarTwoColumns>
     </Section>
@@ -26,7 +26,9 @@ const Hero = () => (
       <HeroOneButton
         title={
           <>
-            <span className="text-[#F0CD6C]">See Beyond Sight with Every Brim</span>
+            <span className="text-[#F0CD6C]">
+              See Beyond Sight with Every Brim
+            </span>
           </>
         }
         description="Enabling the visually impaired to see"
