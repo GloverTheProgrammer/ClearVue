@@ -14,26 +14,47 @@ api_key = os.getenv('OPENAI_API_KEY')
 image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 
 
+
 def button_press():
+
     BUTTON_GPIO = 16
     DELAY = 500
-    last_ms = 0
+    HOLD = 2200
+
+    start_ms = 0
+    start_press_ms = 0
+
+    mode = 0
+    
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     pressed = False
+    held = False
 
     while True:
-        # button is pressed when pin is LOW
+
         if not GPIO.input(BUTTON_GPIO):
-            if not pressed and (time.time() * 1000 - last_ms > DELAY):
-                print("Button pressed!")
+            if not pressed and (time.time() * 1000 - start_ms > DELAY):
                 pressed = True
-                last_ms = time.time() * 1000
-                return True
-        # button not pressed (or released)
+                start_ms = time.time() * 1000
+            if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
+                held = True
+                if mode == 2:
+                    mode = 0
+                else:
+                    mode = mode + 1
+                print(mode)
+                if(mode == 1):
+                    return 1 # Current implementation 
+                if(mode == 2):
+                    return 2 # Reading Labels
         else:
+            if pressed and not held:
+                print("pressed")
+                return 0 # Describe closest item
             pressed = False
+            held = False
         time.sleep(0.1)
 
 
@@ -49,6 +70,8 @@ def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
         return
+    
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
     
     img_name = os.path.join(directory, f"opencv_frame.png")
     cv2.imwrite(img_name, frame)
@@ -167,15 +190,18 @@ def closest_classify(base64_image, api_key):
 
 
 
-
-
-
-
-
-if button_press():
+if button_press() == 0:
     save_image()
     base64_image = encode_image(image_path)
     story_classify(base64_image, api_key)
-    
 
+elif button_press() == 1:
+    save_image()
+    base64_image = encode_image(image_path)
+    label_classify(base64_image, api_key)
+
+elif button_press() == 2:
+    save_image()
+    base64_image = encode_image(image_path)
+    closest_classify(base64_image, api_key)
 
