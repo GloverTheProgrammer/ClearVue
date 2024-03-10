@@ -3,7 +3,8 @@ import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
 from labels import classes
-
+from gtts import gTTS
+import subprocess
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False):
         self.model_path = model_path
@@ -15,6 +16,7 @@ class ObjectDetectionStreamer:
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
         self.labels = classes
+        self.previous_summary = set()
         
     def draw_boxes_with_labels(self, image, boxes, classes, scores, labels):
         draw = ImageDraw.Draw(image)
@@ -62,7 +64,8 @@ class ObjectDetectionStreamer:
                     cap.grab()
                 processed_frame, summary = self.process_frame(frame)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
-                print(summary)
+                current_objects = {(class_name, coordinates) for class_name, coordinates in summary}
+                self.tts_summarize(current_objects)  # Call tts_summarize with current detected objects
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
         finally:
@@ -90,21 +93,39 @@ class ObjectDetectionStreamer:
             cv2.destroyAllWindows()
 
     def summarize_detected_objects(self, boxes, classes, scores, labels):
-        summary = []
+        summary = set()  # Use a set for efficient comparison in tts_summarize
         for box, class_id, score in zip(boxes, classes, scores):
             if score > 0.5:  # Filter objects with low confidence
                 class_id = int(class_id) + 1  # Adjust class_id to match labels dictionary
                 ymin, xmin, ymax, xmax = box
                 coordinates = f"Coordinates: ({xmin:.2f}, {ymin:.2f}), ({xmax:.2f}, {ymax:.2f})"
                 class_name = labels.get(class_id, "Unknown")
-                rounded_score = round(score, 2)
-                summary.append(f"{class_name} ({rounded_score*100}%), {coordinates}")
-        if summary:
-            return "Detected objects: " + "; ".join(summary)
-        else:
-            return "No objects detected with high confidence."
+                summary.add((class_name, coordinates))  # Add tuple of class_name and coordinates
+        return summary  # Return a set of tuples
 
+    def tts_summarize(self, current_objects):
+        """
+        Uses gTTS to summarize changes in detected objects.
+
+        :param current_objects: A set of tuples with class names and coordinates of currently detected objects.
+        """
+        current_summary = {name for name, _ in current_objects}
+        new_objects = current_summary - self.previous_summary
+        lost_objects = self.previous_summary - current_summary
+
+        messages = []
+        if new_objects:
+            messages.append(f"New object{'s' if len(new_objects) > 1 else ''}: {', '.join(new_objects)}.")
+        if lost_objects:
+            messages.append(f"Lost object{'s' if len(lost_objects) > 1 else ''}: {', '.join(lost_objects)}.")
+        if not messages:
+            messages.append(f"Total {len(current_summary)} object{'s' if len(current_summary) != 1 else ''} detected.")
         
+        message = ' '.join(messages)
+        subprocess.call(['say', message])
+
+        self.previous_summary = current_summary 
+
 if __name__ == "__main__":
     model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
     streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=False)
