@@ -32,7 +32,7 @@ def button_press(base_mode):
 
     mode = base_mode
 
-    modes = ["In Front", "Reading Mode", "Story Mode", "Object Detection"]
+    modes = ["In Front", "Reading Mode", "Story Mode", "Object Detection Mode"]
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -159,7 +159,6 @@ def main():
                 save_image()
                 base64_image = encode_image(image_path)
                 text = text = classify_image(base64_image, api_key, mode)
-                text2speech(text)
                 text2speech(text)
             system_ready = True  # Ready for new actions
 
