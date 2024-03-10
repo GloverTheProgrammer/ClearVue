@@ -1,3 +1,5 @@
+from objectDetection.labels import classes
+import objectDetection.efficientdet as ObjectDetectionStreamer
 from collections import Counter
 import cv2
 import numpy as np
@@ -11,12 +13,11 @@ from gtts import gTTS
 from threading import Thread
 import time
 
-import os, sys
+import os
+import sys
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
 
-import objectDetection.efficientdet as ObjectDetectionStreamer
-from objectDetection.labels import classes
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False, text_to_speech=False):
@@ -163,17 +164,12 @@ class ObjectDetectionStreamer:
                 pygame.time.Clock().tick(10)
         Thread(target=play_audio, args=(file_path,)).start()
 
-
-    def main():
-        model_path = os.path.join(project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
-        pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(project_dir, "objectDetection/starting.mp3"))
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+    def main(exit_condition_callback=None):
+        model_path = os.path.join(
+            project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
         streamer = ObjectDetectionStreamer(
             model_path=model_path, flip_camera=True, text_to_speech=True)
-        streamer.start_stream()
+        streamer.start_stream(exit_condition_callback=exit_condition_callback)
 
 
 if __name__ == "__main__":

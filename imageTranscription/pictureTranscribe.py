@@ -1,3 +1,4 @@
+import objectDetection.efficientdet as ObjectDetectionStreamer
 import os
 import base64
 import requests
@@ -13,7 +14,6 @@ import base64
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import objectDetection.efficientdet as ObjectDetectionStreamer
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
 
@@ -142,6 +142,11 @@ def text2speech(text):
     sd.wait()
 
 
+def check_button_press_for_exit():
+    # Check if the exit button is pressed during ObjectDetectionStreamer
+    if button_press() == 'exit':  # Assume button_press() can return 'exit' or similar
+        raise SystemExit
+
 def main():
     global system_ready
     base_mode = 0
@@ -150,17 +155,20 @@ def main():
         if system_ready:
             mode = button_press(base_mode)  # Check for button press or hold
             if mode == 3:
-                system_ready = False  # Prevent further actions
-                ObjectDetectionStreamer.ObjectDetectionStreamer.main()
-                system_ready = True
+                system_ready = False  # Prevent further actions during object detection
+                try:
+                    ObjectDetectionStreamer.ObjectDetectionStreamer.main(
+                        exit_callback=lambda: check_button_press_for_exit())
+                finally:
+                    system_ready = True  # Ensure system_ready is reset even if exited
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
                 save_image()
                 base64_image = encode_image(image_path)
-                text = text = classify_image(base64_image, api_key, mode)
+                text = classify_image(base64_image, api_key, mode)
                 text2speech(text)
-            system_ready = True  # Ready for new actions
+                system_ready = True  # Ready for new actions
 
 
 if __name__ == "__main__":
