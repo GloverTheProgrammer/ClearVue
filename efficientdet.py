@@ -14,7 +14,7 @@ class ObjectDetectionStreamer:
         self.output_details = self.interpreter.get_output_details()
         self.labels = {}
         
-    def draw_boxes_with_labels(image, boxes, classes, scores, labels):
+    def draw_boxes_with_labels(self,image, boxes, classes, scores, labels):
         draw = ImageDraw.Draw(image)
         for box, class_id, score in zip(boxes, classes, scores):
             if score > 0.5:
