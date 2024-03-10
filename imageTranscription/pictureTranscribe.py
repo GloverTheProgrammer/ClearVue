@@ -3,6 +3,7 @@ import base64
 import requests
 import cv2
 import time
+import pyttsx3
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
 
@@ -102,7 +103,11 @@ def classify_image(base64_image, api_key, mode):
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         resp_json = response.json()
-        print(resp_json['content'])
+        speak = resp_json[content][0]
+        print(speak)
+        engine = pyttsx3.init()
+        engine.say(speak)
+        engine.runAndWait()
     except Exception as e:
         print(e)
 
