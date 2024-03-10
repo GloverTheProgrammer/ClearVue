@@ -104,8 +104,9 @@ def classify_image(base64_image, api_key, mode):
 
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        print(response['choices'][0]['message']['content'])
-        return response['choices'][0]['message']['content']
+        text = response['choices'][0]['message']['content']
+        print(text)
+        return text
     except Exception as e:
         print(e)
 
