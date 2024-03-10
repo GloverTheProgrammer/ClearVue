@@ -6,7 +6,8 @@ import time
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
+import sounddevice as sd
+import soundfile as sf
 import base64
 
 load_dotenv()  # Loads the .env file into environment variables
@@ -119,6 +120,12 @@ def text2speech(text):
     voice="shimmer", 
     input=text,
 )
+    speech_path = "/home/blackhat/Desktop/transcribe/speech.mp3"
+    response.stream_to_file(speech_path)
+    audio_data,sample_rate = sf.read(speech_path)
+    sd.play(audio_data,sample_rate)
+    sd.wait()
+
     
 
 
@@ -134,6 +141,7 @@ def main():
             save_image()
             base64_image = encode_image(image_path)
             text = classify_image(base64_image, api_key, mode)
+            text2speech(text)
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
