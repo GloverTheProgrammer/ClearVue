@@ -16,16 +16,13 @@ image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 
 
 def button_press():
-
     BUTTON_GPIO = 16
-    DELAY = 500
-    HOLD = 2200
+    DELAY = 500  # Delay for debouncing
+    HOLD = 2200  # Duration to differentiate between press and hold
 
     start_ms = 0
-    start_press_ms = 0
-
     mode = 0
-    
+
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -33,25 +30,22 @@ def button_press():
     held = False
 
     while True:
-
-        if not GPIO.input(BUTTON_GPIO):
-            if not pressed and (time.time() * 1000 - start_ms > DELAY):
+        if not GPIO.input(BUTTON_GPIO):  # Button is pressed
+            if not pressed:  # Initial press
                 pressed = True
-                start_ms = time.time() * 1000
-            if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
+                start_ms = time.time() * 1000  # Mark the time when button is pressed
+            elif (time.time() * 1000 - start_ms > HOLD) and not held:  # Check if it's a hold
                 held = True
-                if mode == 2:
-                    mode = 0
-                else:
-                    mode = mode + 1
-                print(mode)
-        else:
-            if pressed and not held:
-                print("pressed")
-                return mode
+                print(f"Mode returned: {mode}")
+                return mode  # Return current mode on long press
+        else:  # Button is released
+            if pressed and not held:  # It's a click, not a hold
+                mode = (mode + 1) % 3  # Cycle through modes 0-2
+                print(f"Mode changed to: {mode}")
             pressed = False
             held = False
         time.sleep(0.1)
+
 
 
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
