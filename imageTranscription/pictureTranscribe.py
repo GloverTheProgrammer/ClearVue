@@ -103,7 +103,7 @@ def classify_image(base64_image, api_key, mode):
 
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        resp_dict = json.loads(response.json())
+        resp_dict = json.loads(response)
 
         print (resp_dict)
         speak = resp_dict['choices']['message']['content']
