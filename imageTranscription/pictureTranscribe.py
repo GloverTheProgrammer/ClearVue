@@ -6,6 +6,8 @@ import time
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
 from openai import OpenAI
+import json
+import base64
 
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
@@ -105,7 +107,7 @@ def classify_image(base64_image, api_key, mode):
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         textjson = response.json()
-        text = textjson['choices'][0]['text']
+        text = textjson['choices'][0]['message']['content']
         print(text)
     except Exception as e:
         print(e)
