@@ -122,7 +122,6 @@ def text2speech(text):
     input=text,
 )
     speech_path = "/home/blackhat/Desktop/transcribe/speech.mp3"
-    response.stream_to_file(speech_path)
     audio_data,sample_rate = sf.read(speech_path)
     sd.play(audio_data,sample_rate)
     sd.wait()
