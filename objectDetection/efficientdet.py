@@ -2,7 +2,18 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
-from Object_Detection.labels import classes
+from gtts import gTTS
+import pygame
+import pygame.mixer
+import tempfile
+from gtts import gTTS
+from threading import Thread
+import time
+
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import objectDetection.efficientdet as ObjectDetectionStreamer
+from objectDetection.labels import classes
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False):
@@ -86,8 +97,65 @@ class ObjectDetectionStreamer:
             cap.release()
             cv2.destroyAllWindows()
 
+    def summarize_detected_objects(self, boxes, classes, scores, labels):
+        summary = set()
+        for box, class_id, score in zip(boxes, classes, scores):
+            if score > 0.5:
+                class_id = int(class_id) + 1
+                ymin, xmin, ymax, xmax = box
+                coordinates = f"Coordinates: ({xmin:.2f}, {ymin:.2f}), ({xmax:.2f}, {ymax:.2f})"
+                class_name = labels.get(class_id, "Unknown")
+                summary.add((class_name, coordinates))
+        return summary
+
+    def tts_summarize(self, current_objects):
+
+        current_time = time.time()
+        if current_time - self.last_tts_time < self.tts_delay:
+            return
+        # Determine new and lost objects by comparing current and previous Counter objects
+        object_names = Counter([name for name, _ in current_objects])
+
+        if object_names:
+            details = ', '.join(
+                [f"{count} {name}{'s' if count > 1 else ''}" for name, count in object_names.items()])
+            message = f"In view: {details}."
+        else:
+            return
+
+        tts = gTTS(text=message, lang='en')
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3')
+        tts.save(temp_file.name)
+        temp_file.close()
+
+        self.play_audio_async(temp_file.name)
+
+        # Update previous summary with current object names for the next comparison
+        self.last_tts_time = current_time
+        self.previous_summary = set([name for name, _ in current_objects])
+
+    def play_audio_async(self, file_path):
+        def play_audio(file_path):
+            pygame.mixer.init()
+            pygame.mixer.music.load(file_path)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
+        Thread(target=play_audio, args=(file_path,)).start()
+
+
+    def main():
+        model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
+        tts = gTTS(text="Object Detection Mode", lang='en')
+        tts.save("objectDetection/starting.mp3")
+        pygame.mixer.init()
+        pygame.mixer.music.load("objectDetection/starting.mp3")
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        streamer = ObjectDetectionStreamer(
+            model_path=model_path, flip_camera=True, text_to_speech=True)
+        streamer.start_stream()
 
 if __name__ == "__main__":
-    model_path = "models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
-    streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=True)
-    streamer.start_stream()
+    ObjectDetectionStreamer.main()

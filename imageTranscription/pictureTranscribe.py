@@ -5,6 +5,14 @@ import cv2
 import time
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
+from openai import OpenAI
+import sounddevice as sd
+import soundfile as sf
+import base64
+
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import objectDetection.efficientdet as ObjectDetectionStreamer
 
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
@@ -114,12 +122,18 @@ def main():
     while True:
         if system_ready:
             mode = button_press(base_mode)  # Check for button press or hold
-            base_mode = mode
-            system_ready = False  # Prevent further actions
-            save_image()
-            base64_image = encode_image(image_path)
-            classify_image(base64_image, api_key, mode)
-            system_ready = True  # Ready for new actions
+            if mode == 3:
+                system_ready = False  # Prevent further actions
+                ObjectDetectionStreamer.main()
+                system_ready = True
+            else:
+                base_mode = mode
+                system_ready = False  # Prevent further actions
+                save_image()
+                base64_image = encode_image(image_path)
+                text = classify_image(base64_image, api_key, mode)
+                text2speech(text)
+                system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
     main()
