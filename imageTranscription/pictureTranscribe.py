@@ -42,6 +42,14 @@ def button_press(base_mode):
                 held = True
                 mode = (mode + 1) % 3
                 print("Changed mode to ", mode)
+                text = ""
+                if mode == 0:
+                    text = "Closest Mode"
+                elif mode == 1:
+                    text = "Reading Mode"
+                elif mode == 2:
+                    text = "Story Mode"
+                text2speech(text)
         else:
             if pressed and not held:
                 print("pressed")
