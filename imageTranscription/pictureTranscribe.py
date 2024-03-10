@@ -151,8 +151,7 @@ def main():
             mode = button_press(base_mode)  # Check for button press or hold
             if mode == 3:
                 system_ready = False  # Prevent further actions
-                ObjectDections = ObjectDetectionStreamer.ObjectDetectionStreamer()
-                ObjectDections.main()
+                ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 system_ready = True
             else:
                 base_mode = mode
