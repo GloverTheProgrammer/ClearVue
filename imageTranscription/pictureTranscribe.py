@@ -110,6 +110,7 @@ def classify_image(base64_image, api_key, mode):
         textjson = response.json()
         text = textjson['choices'][0]['message']['content']
         print(text)
+        return text
     except Exception as e:
         print(e)
 
