@@ -50,6 +50,7 @@ def button_press(base_mode):
         else:
             if pressed and not held:
                 print("pressed")
+                text2speech("Pressed" + modes[mode])
                 return mode
             pressed = False
             held = False
