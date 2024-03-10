@@ -1,4 +1,3 @@
-import objectDetection.efficientdet as ObjectDetectionStreamer
 import os
 import base64
 import requests
@@ -14,6 +13,7 @@ import base64
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import objectDetection.efficientdet as ObjectDetectionStreamer
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
 
