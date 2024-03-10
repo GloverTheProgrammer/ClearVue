@@ -167,6 +167,5 @@ class ObjectDetectionStreamer:
 if __name__ == "__main__":
     model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
     streamer = ObjectDetectionStreamer(
-        model_path=model_path, flip_camera=True, text_to_speech=False)
         model_path=model_path, flip_camera=True, text_to_speech=True)
     streamer.start_stream()
