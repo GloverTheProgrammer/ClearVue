@@ -151,7 +151,6 @@ def main():
                 text = text = classify_image(base64_image, api_key, mode)
                 text2speech(text)
                 text2speech(text)
->>>>>>> Stashed changes
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
