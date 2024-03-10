@@ -49,6 +49,8 @@ def button_press(base_mode):
             if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
                 held = True
                 mode = (mode + 1) % len(modes)
+                while mode == 3 and not GPIO.input(BUTTON_GPIO):
+                    print("waiting")
                 print("Changed mode to ", mode)
                 text2speech("Changed mode to " + modes[mode])
         else:
