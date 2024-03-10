@@ -20,7 +20,7 @@ project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
 
 
-def button_press():
+def monitor_button():
     BUTTON_GPIO = 16
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -28,9 +28,15 @@ def button_press():
     while True:
         if not GPIO.input(BUTTON_GPIO):  # Button is pressed
             print("Button pressed, exiting.")
-            sys.exit(0)
+            return
         time.sleep(0.1)  # Debounce delay
 
+def button_press():
+    monitor_button()
+    print("Button pressed, exiting.")
+    cv2.release()
+    cv2.destroyAllWindows()
+    sys.exit(0)
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False, text_to_speech=False):
@@ -179,16 +185,14 @@ class ObjectDetectionStreamer:
 
 
     def main():
+        button_thread = Thread(target=button_press)
+        button_thread.start()
         model_path = os.path.join(
             project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
         streamer = ObjectDetectionStreamer(
             model_path=model_path, flip_camera=True, text_to_speech=True)
-
-        button_thread = Thread(target=button_press)
-        button_thread.start()
         streamer.start_stream()
         button_thread.join() 
-
 
 if __name__ == "__main__":
     ObjectDetectionStreamer.main()
