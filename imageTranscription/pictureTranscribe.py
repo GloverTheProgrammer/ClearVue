@@ -133,7 +133,6 @@ def main():
             save_image()
             base64_image = encode_image(image_path)
             text = classify_image(base64_image, api_key, mode)
-            text2speech(text)
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
