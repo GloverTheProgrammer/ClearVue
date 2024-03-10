@@ -28,7 +28,7 @@ def button_press():
     while True:
         if not GPIO.input(BUTTON_GPIO):  # Button is pressed
             print("Button pressed, exiting.")
-            return
+            sys.exit(0)
         time.sleep(0.1)  # Debounce delay
 
 
