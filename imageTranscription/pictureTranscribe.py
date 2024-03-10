@@ -139,19 +139,18 @@ def main():
             classify_image(base64_image, api_key, mode)
             if mode == 3:
                 system_ready = False  # Prevent further actions
-<<<<<<< Updated upstream
                 ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 if not GPIO.input(BUTTON_GPIO):
                     button_press(base_mode)
                 system_ready = True
-=======
+
                 try:
                     ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                     if not GPIO.input(BUTTON_GPIO):
                         button_press(base_mode)
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
->>>>>>> Stashed changes
+
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
