@@ -8,9 +8,7 @@ import numpy as np
 processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
 model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
 
-
 # Assuming 'model' and 'processor' are already defined and loaded as per your script
-
 def draw_boxes_with_labels(image, results, id2label):
     draw = ImageDraw.Draw(image)
     for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):

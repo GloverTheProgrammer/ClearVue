@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
-from labels import classes
+from Object_Detection.labels import classes
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False):
