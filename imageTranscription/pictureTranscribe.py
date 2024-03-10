@@ -103,7 +103,7 @@ def classify_image(base64_image, api_key, mode):
 
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        speak = json.loads(response)
+        speak = response.json()
         print(speak)
         engine = pyttsx3.init()
         engine.say()
