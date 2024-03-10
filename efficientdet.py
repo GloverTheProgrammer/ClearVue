@@ -35,6 +35,7 @@ class ObjectDetectionStreamer:
 
     def process_frame(self, frame):
         frame_small = cv2.resize(frame, self.frame_resize_dims)
+        frame_small = cv2.rotate(frame, cv2.ROTATE_180)
         frame_small = cv2.cvtColor(frame_small, cv2.COLOR_BGR2RGB)
         input_data = np.expand_dims(frame_small, axis=0)
         self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
