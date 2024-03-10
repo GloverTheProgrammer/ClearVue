@@ -14,16 +14,22 @@ class ObjectDetectionStreamer:
         self.output_details = self.interpreter.get_output_details()
         self.labels = {}
         
-    def draw_boxes_with_labels(self,image, boxes, classes, scores, labels):
+    def draw_boxes_with_labels(self, image, boxes, classes, scores, labels):
         draw = ImageDraw.Draw(image)
         for box, class_id, score in zip(boxes, classes, scores):
             if score > 0.5:
                 ymin, xmin, ymax, xmax = box
                 (left, right, top, bottom) = (xmin * image.width, xmax * image.width,
-                                              ymin * image.height, ymax * image.height)
+                                            ymin * image.height, ymax * image.height)
                 draw.rectangle([(left, top), (right, bottom)], outline="red", width=3)
-                label_text = f"{labels.get(class_id, 'N/A')}: {round(score, 3)}"
-                draw.text((left, top), label_text, fill="red")
+                # Replace 'N/A' with actual class if missing
+                class_name = labels.get(class_id, f"Class: {class_id}")
+                score = float(score)
+                rounded_score = labels.get(round(score, 3), f"Confience: {round(score, 3):.3f}")
+                coordinates = f"({left:.1f}, {top:.1f}), ({right:.1f}, {bottom:.1f})"
+                draw.text((left, top), class_name, fill="red")
+                draw.text((left, top + 20), rounded_score, fill="red")
+                draw.text((left, top + 40), coordinates, fill="red")
 
     def process_frame(self, frame):
         frame_small = cv2.resize(frame, self.frame_resize_dims)
@@ -37,7 +43,6 @@ class ObjectDetectionStreamer:
         image = Image.fromarray(frame_small)
         self.draw_boxes_with_labels(image, boxes, classes, scores, self.labels)
         return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-
 
     def start_stream(self):
         cap = cv2.VideoCapture(0)
