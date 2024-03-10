@@ -156,6 +156,7 @@ def main():
                     ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
+                    mode = base_mode % 4  # Reset mode to base mode
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
