@@ -72,7 +72,7 @@ def encode_image(image_path):
 def classify_image(base64_image, api_key, mode):
     if mode == 0:
         print("Closest Mode")
-        text_prompt = "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves, all within a concise limit of 50 words.."
+        text_prompt = "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves, all within a concise limit of 15 words."
     elif mode == 1:
         print("Reading Mode")
         text_prompt = "Provide a comprehensive description of text in the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on text, labels, and anything that would be of use text wise within the image. Do this within 50 words."
