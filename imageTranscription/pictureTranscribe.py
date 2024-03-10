@@ -44,6 +44,7 @@ def button_press(base_mode):
                 held = True
                 mode = (mode + 1) % 3
                 print("Changed mode to ", mode)
+                text2speech("Changed mode to " + str(mode))
         else:
             if pressed and not held:
                 print("pressed")
@@ -114,16 +115,6 @@ def classify_image(base64_image, api_key, mode):
     except Exception as e:
         print(e)
 
-def stream_to_file(
-    self,
-    file: str | os.PathLike[str],
-    *,
-    chunk_size: int | None = None,
-) -> None:
-    with open(file, mode="wb") as f:
-        for data in self.response.iter_bytes(chunk_size):
-            f.write(data)
-
 def text2speech(text):
     client = OpenAI(api_key=api_key)
     response = client.audio.speech.create(
@@ -132,7 +123,7 @@ def text2speech(text):
     input=text,
 )
     speech_path = "/home/blackhat/Desktop/transcribe/speech.mp3"
-    stream_to_file(speech_path)
+    response.stream_to_file(speech_path)
     audio_data,sample_rate = sf.read(speech_path)
     sd.play(audio_data,sample_rate)
     sd.wait()
