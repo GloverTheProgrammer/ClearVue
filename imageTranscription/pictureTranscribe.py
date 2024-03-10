@@ -147,6 +147,10 @@ def main():
     global system_ready
     base_mode = 0
 
+    BUTTON_GPIO = 16
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
     while True:
         if system_ready:
             mode = button_press(base_mode)  # Check for button press or hold
@@ -156,6 +160,8 @@ def main():
                     ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
+                    if not GPIO.input(BUTTON_GPIO):
+                        button_press(base_mode)
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
