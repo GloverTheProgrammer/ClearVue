@@ -1,3 +1,4 @@
+from collections import Counter
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
@@ -120,17 +121,25 @@ class ObjectDetectionStreamer:
         return summary
 
     def tts_summarize(self, current_objects):
-        current_summary = {name for name, _ in current_objects}
-        new_objects = current_summary - self.previous_summary
-        lost_objects = self.previous_summary - current_summary
+        # Create a Counter for the current and previous objects to manage counts
+        current_objects_counter = Counter(
+            [name for name, _ in current_objects])
+        previous_objects_counter = Counter(self.previous_summary)
+
+        # Determine new and lost objects by comparing current and previous Counter objects
+        new_objects = current_objects_counter - previous_objects_counter
+        lost_objects = previous_objects_counter - current_objects_counter
 
         messages = []
         if new_objects:
-            messages.append(
-                f"New object{'s' if len(new_objects) > 1 else ''}: {', '.join(new_objects)}.")
+            new_obj_messages = [
+                f"{count} {obj}{' has' if count == 1 else 's have'} been added." for obj, count in new_objects.items()]
+            messages.append(' '.join(new_obj_messages))
         if lost_objects:
-            messages.append(
-                f"Lost object{'s' if len(lost_objects) > 1 else ''}: {', '.join(lost_objects)}.")
+            lost_obj_messages = [
+                f"{count} {obj}{' has' if count == 1 else 's have'} been lost." for obj, count in lost_objects.items()]
+            messages.append(' '.join(lost_obj_messages))
+
         if not messages:
             return
 
@@ -141,6 +150,9 @@ class ObjectDetectionStreamer:
         temp_file.close()
 
         self.play_audio_async(temp_file.name)
+
+        # Update previous summary with current object names for the next comparison
+        self.previous_summary = set([name for name, _ in current_objects])
 
     def play_audio_async(self, file_path):
         def play_audio(file_path):
