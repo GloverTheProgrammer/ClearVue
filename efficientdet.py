@@ -5,10 +5,11 @@ import tensorflow as tf
 from labels import classes
 
 class ObjectDetectionStreamer:
-    def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10):
+    def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False):
         self.model_path = model_path
         self.frame_resize_dims = frame_resize_dims
         self.skip_frames = skip_frames
+        self.flip_camera = flip_camera
         self.interpreter = tf.lite.Interpreter(model_path=self.model_path)
         self.interpreter.allocate_tensors()
         self.input_details = self.interpreter.get_input_details()
@@ -34,8 +35,9 @@ class ObjectDetectionStreamer:
                 draw.text((left, top + 40), coordinates, fill="red")
 
     def process_frame(self, frame):
+        if self.flip_camera:
+            frame = cv2.flip(frame, -1)
         frame_small = cv2.resize(frame, self.frame_resize_dims)
-        frame_small = cv2.rotate(frame, cv2.ROTATE_180)
         frame_small = cv2.cvtColor(frame_small, cv2.COLOR_BGR2RGB)
         input_data = np.expand_dims(frame_small, axis=0)
         self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
@@ -67,13 +69,12 @@ class ObjectDetectionStreamer:
     def take_picture(self, warmup_frames=30):
         cap = cv2.VideoCapture(0)
         try:
-            for _ in range(warmup_frames):  # Allow camera to warm up
+            for _ in range(warmup_frames): 
                 ret, frame = cap.read()
                 if not ret:
                     raise ValueError("Failed to capture image during warmup")
 
             ret, frame = cap.read()
-            cap.release()
 
             if not ret:
                 raise ValueError("Failed to capture image")
@@ -88,5 +89,5 @@ class ObjectDetectionStreamer:
 
 if __name__ == "__main__":
     model_path = "models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
-    streamer = ObjectDetectionStreamer(model_path=model_path)
+    streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=True)
     streamer.start_stream()
