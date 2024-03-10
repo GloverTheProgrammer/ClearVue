@@ -11,25 +11,25 @@ Globally, an estimated 40 to 45 million people are blind, and 135 million have l
 ## Features
 
 ### In Front
-![In Front Feature](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/027be7ee-4ade-458f-ac18-38ed37edbb0c)
+![2](https://github.com/GloverTheProgrammer/ClearVue/assets/67079589/7c825485-356b-472e-9ce1-3c922eef2e2e)
 
 
 *In Front* revolutionizes how individuals with visual impairments perceive their immediate environment by providing short, real-time auditory feedback to identify nearby objects.
 
 ### Story Mode
-![Story Mode Feature](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/2e6b903f-f674-4a68-a91e-c231afac473c)
+![1](https://github.com/GloverTheProgrammer/ClearVue/assets/67079589/3d0a8073-ff5d-4b8d-83d5-837bbb9730ef)
 
 
 *Story Mode* narrates the user's surroundings, offering a comprehensive understanding and enhancing their interaction with the world, like having a personal narrator for the environment around them.
 
 ### Reading Mode
-![Reading Mode Feature](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/d7269355-b34a-4172-84de-0fcf61619e7a)
+![3](https://github.com/GloverTheProgrammer/ClearVue/assets/67079589/d4831747-ef07-44db-b37c-c9bf6cfabeac)
 
 
 *Reading Mode* is tailored for accessibility, enabling users to audibly read labels in their vicinity, simplifying the comprehension of small fonts or complex wording.
 
 ### Active Detection Mode
-![Active Detection Mode Feature](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/56cc3438-b73d-4807-a2c0-021355278d64)
+![4](https://github.com/GloverTheProgrammer/ClearVue/assets/67079589/5a666848-be7b-4844-bb85-592d855dd6e3)
 
 
 *Active Detection Mode* caters to users on the move, providing real-time auditory feedback about the immediate environment, including the presence, count, and type of nearby objects.
