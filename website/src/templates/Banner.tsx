@@ -11,7 +11,7 @@ const Banner = () => (
       subtitle="Visit our GitHub"
       button={
         <Link href="https://github.com/GloverTheProgrammer/ClearVue/">
-          <Button>Get Started</Button>
+          <Button>GitHub</Button>
         </Link>
       }
     />

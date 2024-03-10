@@ -26,7 +26,7 @@ const Hero = () => (
       <HeroOneButton
         title={
           <>
-            <span className="text-primary-500">See Beyond Sight with Every Brim</span>
+            <span className="text-[#F0CD6C]">See Beyond Sight with Every Brim</span>
           </>
         }
         description="Enabling the visually impaired to see"
