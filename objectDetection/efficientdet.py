@@ -18,7 +18,7 @@ import os
 import sys
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
-
+stream_stop_event = Thread.Event()
 
 def monitor_button():
     BUTTON_GPIO = 16
@@ -33,10 +33,10 @@ def monitor_button():
 
 def button_press():
     monitor_button()
-    print("Button pressed, exiting.")
-    cv2.release()
-    cv2.destroyAllWindows()
-    sys.exit(0)
+    monitor_button_thread = Thread.Thread(target=monitor_button)
+    monitor_button_thread.start()
+    monitor_button_thread.join()
+    stream_stop_event.set()
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False, text_to_speech=False):
@@ -95,6 +95,7 @@ class ObjectDetectionStreamer:
         return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR), summary
 
     def start_stream(self):
+        global stream_stop_event
         cap = cv2.VideoCapture(0)
         try:
             while True:
@@ -107,6 +108,7 @@ class ObjectDetectionStreamer:
                 print(summary)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
+                    stream_stop_event.set()
                     break
                 if not self.text_to_speech:
                     continue
@@ -116,6 +118,7 @@ class ObjectDetectionStreamer:
         finally:
             cap.release()
             cv2.destroyAllWindows()
+            stream_stop_event.clear()
 
     def take_picture(self, warmup_frames=30):
         cap = cv2.VideoCapture(0)
@@ -183,7 +186,6 @@ class ObjectDetectionStreamer:
                 pygame.time.Clock().tick(10)
         Thread(target=play_audio, args=(file_path,)).start()
 
-
     def main():
         button_thread = Thread(target=button_press)
         button_thread.start()
@@ -192,7 +194,8 @@ class ObjectDetectionStreamer:
         streamer = ObjectDetectionStreamer(
             model_path=model_path, flip_camera=True, text_to_speech=True)
         streamer.start_stream()
-        button_thread.join() 
+        button_thread.join()
+
 
 if __name__ == "__main__":
     ObjectDetectionStreamer.main()
