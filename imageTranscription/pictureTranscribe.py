@@ -153,8 +153,8 @@ def main():
             if mode == 3:
                 system_ready = False  # Prevent further actions during object detection
                 try:
-                    ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                     text2speech("ClearView")
+                    ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
                     mode = 0
