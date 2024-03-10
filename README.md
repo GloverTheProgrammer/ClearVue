@@ -1,4 +1,4 @@
-# LogoClearVue: Redefining Sight, One Hat at a Time
+# ClearVue: Redefining Sight, One Hat at a Time
 
 ![ClearVue](https://github.com/GloverTheProgrammer/ClearVue/assets/117209189/578a8c82-ff94-442d-acab-30aa8d175561)
 
