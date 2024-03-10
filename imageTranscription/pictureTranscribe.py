@@ -22,31 +22,20 @@ def button_press():
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     pressed_time = None
-    mode = 0
 
     while True:
         if GPIO.input(BUTTON_GPIO) == GPIO.LOW:  # Button is pressed
             if pressed_time is None:
                 pressed_time = time.time()
-            elif (time.time() - pressed_time) > HOLD_TIME:
-                # Button has been held down long enough to count as a hold
-                mode = (mode + 1) % 3
-                print("Button held. Mode changed to:", mode)
-                # Wait for the button to be released to avoid quick press action immediately after
-                while GPIO.input(BUTTON_GPIO) == GPIO.LOW:
-                    time.sleep(DELAY)
-                pressed_time = None  # Reset pressed_time after changing mode
-                return (False, mode)  # No action initiated, only mode changed
-        else:
-            if pressed_time is not None:
-                elapsed_time = time.time() - pressed_time
-                if elapsed_time < HOLD_TIME:
-                    # Button was pressed and released before the hold time: initiate action
-                    print("Button pressed quickly. Action initiated for mode:", mode)
-                    return (True, mode)  # Action should be initiated for the current mode
-                pressed_time = None  # Reset pressed_time for both quick press and after button release
-            time.sleep(DELAY)
-
+            # Wait for button release or hold time pass
+            while GPIO.input(BUTTON_GPIO) == GPIO.LOW:
+                if (time.time() - pressed_time) > HOLD_TIME:
+                    # Long hold detected
+                    return 'hold'
+            # If the button was released before HOLD_TIME
+            if (time.time() - pressed_time) < HOLD_TIME:
+                return 'press'
+        time.sleep(DELAY)
 
 
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
@@ -112,16 +101,17 @@ def main():
 
     while True:
         if system_ready:
-            action_initiated, new_mode = button_press()  # Check for button action and mode
+            result = button_press()  # Check for button press or hold
 
-            if action_initiated:  # If a press is detected, classify the image for the current mode
-                system_ready = False  # Prevent further actions until this one completes
+            if result == 'press':  # Quick press detected
+                system_ready = False  # Prevent further actions
                 save_image()
                 base64_image = encode_image(image_path)
                 classify_image(base64_image, api_key, mode)
-                system_ready = True  # Ready for a new action
-            else:  # Mode changed on hold
-                mode = new_mode  # Update the mode based on the button hold
+                system_ready = True  # Ready for new actions
+            elif result == 'hold':  # Hold detected, change mode
+                mode = (mode + 1) % 3  # Cycle through modes
+                print("Mode changed to:", mode)
 
 if __name__ == "__main__":
     main()
