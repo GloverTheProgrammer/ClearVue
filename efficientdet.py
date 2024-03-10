@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
+from labels import classes
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10):
@@ -12,18 +13,19 @@ class ObjectDetectionStreamer:
         self.interpreter.allocate_tensors()
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
-        self.labels = {}
+        self.labels = classes
         
     def draw_boxes_with_labels(self, image, boxes, classes, scores, labels):
         draw = ImageDraw.Draw(image)
         for box, class_id, score in zip(boxes, classes, scores):
+            class_id = int(class_id) + 1
             if score > 0.5:
                 ymin, xmin, ymax, xmax = box
                 (left, right, top, bottom) = (xmin * image.width, xmax * image.width,
                                             ymin * image.height, ymax * image.height)
                 draw.rectangle([(left, top), (right, bottom)], outline="red", width=3)
                 # Replace 'N/A' with actual class if missing
-                class_name = labels.get(class_id, f"Class: {class_id}")
+                class_name = f"Classes: {labels.get(class_id, class_id)}"
                 score = float(score)
                 rounded_score = labels.get(round(score, 3), f"Confience: {round(score, 3):.3f}")
                 coordinates = f"({left:.1f}, {top:.1f}), ({right:.1f}, {bottom:.1f})"
@@ -86,4 +88,4 @@ class ObjectDetectionStreamer:
 if __name__ == "__main__":
     model_path = "models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
     streamer = ObjectDetectionStreamer(model_path=model_path)
-    streamer.take_picture()
+    streamer.start_stream()
