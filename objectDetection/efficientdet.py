@@ -6,11 +6,11 @@ import tensorflow as tf
 from labels import classes
 from gtts import gTTS
 import pygame
-import os
 import pygame.mixer
 import tempfile
 from gtts import gTTS
 from threading import Thread
+import time
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False, text_to_speech=False):
@@ -25,6 +25,8 @@ class ObjectDetectionStreamer:
         self.output_details = self.interpreter.get_output_details()
         self.labels = classes
         self.previous_summary = set()
+        self.last_tts_time = time.time()
+        self.tts_delay = 5
 
     def draw_boxes_with_labels(self, image, boxes, classes, scores, labels):
         draw = ImageDraw.Draw(image)
@@ -121,29 +123,19 @@ class ObjectDetectionStreamer:
         return summary
 
     def tts_summarize(self, current_objects):
-        # Create a Counter for the current and previous objects to manage counts
-        current_objects_counter = Counter(
-            [name for name, _ in current_objects])
-        previous_objects_counter = Counter(self.previous_summary)
 
+        current_time = time.time()
+        if current_time - self.last_tts_time < self.tts_delay:
+            return
         # Determine new and lost objects by comparing current and previous Counter objects
-        new_objects = current_objects_counter - previous_objects_counter
-        lost_objects = previous_objects_counter - current_objects_counter
+        object_names = Counter([name for name, _ in current_objects])
 
-        messages = []
-        if new_objects:
-            new_obj_messages = [
-                f"{count} {obj}{' has' if count == 1 else 's have'} been added." for obj, count in new_objects.items()]
-            messages.append(' '.join(new_obj_messages))
-        if lost_objects:
-            lost_obj_messages = [
-                f"{count} {obj}{' has' if count == 1 else 's have'} been lost." for obj, count in lost_objects.items()]
-            messages.append(' '.join(lost_obj_messages))
-
-        if not messages:
+        if object_names:
+            details = ', '.join([f"{count} {name}{'s' if count > 1 else ''}" for name, count in object_names.items()])
+            message = f"In view: {details}."
+        else:
             return
 
-        message = ' '.join(messages)
         tts = gTTS(text=message, lang='en')
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3')
         tts.save(temp_file.name)
@@ -152,6 +144,7 @@ class ObjectDetectionStreamer:
         self.play_audio_async(temp_file.name)
 
         # Update previous summary with current object names for the next comparison
+        self.last_tts_time = current_time
         self.previous_summary = set([name for name, _ in current_objects])
 
     def play_audio_async(self, file_path):
@@ -167,5 +160,5 @@ class ObjectDetectionStreamer:
 if __name__ == "__main__":
     model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
     streamer = ObjectDetectionStreamer(
-        model_path=model_path, flip_camera=True, text_to_speech=True)
+        model_path=model_path, flip_camera=False, text_to_speech=True)
     streamer.start_stream()
