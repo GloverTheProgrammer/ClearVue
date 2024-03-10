@@ -163,7 +163,7 @@ class ObjectDetectionStreamer:
 
 
     def main():
-        model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
+        model_path = "../objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
         tts = gTTS(text="Object Detection Mode", lang='en')
         tts.save("objectDetection/starting.mp3")
         pygame.mixer.init()
