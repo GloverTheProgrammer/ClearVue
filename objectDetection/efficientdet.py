@@ -12,11 +12,24 @@ import tempfile
 from gtts import gTTS
 from threading import Thread
 import time
+import RPi.GPIO as GPIO
 
 import os
 import sys
 project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_dir)
+
+
+def button_press():
+    BUTTON_GPIO = 16
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    while True:
+        if not GPIO.input(BUTTON_GPIO):  # Button is pressed
+            print("Button pressed, exiting.")
+            return
+        time.sleep(0.1)  # Debounce delay
 
 
 class ObjectDetectionStreamer:
@@ -164,12 +177,17 @@ class ObjectDetectionStreamer:
                 pygame.time.Clock().tick(10)
         Thread(target=play_audio, args=(file_path,)).start()
 
-    def main(exit_condition_callback=None):
+
+    def main():
         model_path = os.path.join(
             project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
         streamer = ObjectDetectionStreamer(
             model_path=model_path, flip_camera=True, text_to_speech=True)
-        streamer.start_stream(exit_condition_callback=exit_condition_callback)
+
+        button_thread = Thread(target=button_press)
+        button_thread.start()
+        streamer.start_stream()
+        button_thread.join() 
 
 
 if __name__ == "__main__":

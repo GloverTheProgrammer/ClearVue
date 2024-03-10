@@ -142,10 +142,6 @@ def text2speech(text):
     sd.wait()
 
 
-def check_button_press_for_exit():
-    # Check if the exit button is pressed during ObjectDetectionStreamer
-    if button_press() == 'exit':  # Assume button_press() can return 'exit' or similar
-        raise SystemExit
 
 def main():
     global system_ready
@@ -157,8 +153,7 @@ def main():
             if mode == 3:
                 system_ready = False  # Prevent further actions during object detection
                 try:
-                    ObjectDetectionStreamer.ObjectDetectionStreamer.main(
-                        exit_callback=lambda: check_button_press_for_exit())
+                    ObjectDetectionStreamer.ObjectDetectionStreamer.main()
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
             else:
