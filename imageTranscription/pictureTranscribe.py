@@ -13,7 +13,7 @@ api_key = os.getenv('OPENAI_API_KEY')
 
 image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 
-
+system_ready = True
 
 def button_press():
     BUTTON_GPIO = 16
@@ -180,18 +180,23 @@ def closest_classify(base64_image, api_key):
 
 
 
-if button_press() == 0:
-    save_image()
-    base64_image = encode_image(image_path)
-    story_classify(base64_image, api_key)
+while True:
+    if system_ready:
+        mode = button_press()
+        system_ready = False  
 
-elif button_press() == 1:
-    save_image()
-    base64_image = encode_image(image_path)
-    label_classify(base64_image, api_key)
+        if mode == 0:
+            save_image()
+            base64_image = encode_image(image_path)
+            story_classify(base64_image, api_key)
+        elif mode == 1:
+            save_image()
+            base64_image = encode_image(image_path)
+            label_classify(base64_image, api_key)
+        elif mode == 2:
+            save_image()
+            base64_image = encode_image(image_path)
+            closest_classify(base64_image, api_key)
 
-elif button_press() == 2:
-    save_image()
-    base64_image = encode_image(image_path)
-    closest_classify(base64_image, api_key)
+        system_ready = True  
 
