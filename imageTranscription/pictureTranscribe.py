@@ -124,15 +124,36 @@ def classify_image(base64_image, api_key, mode):
 def main():
     global system_ready
     base_mode = 0
+    BUTTON_GPIO = 16
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     while True:
         if system_ready:
             mode = button_press(base_mode)  # Check for button press or hold
+<<<<<<< Updated upstream
             base_mode = mode
             system_ready = False  # Prevent further actions
             save_image()
             base64_image = encode_image(image_path)
             classify_image(base64_image, api_key, mode)
+=======
+            if mode == 3:
+                system_ready = False  # Prevent further actions
+                ObjectDetectionStreamer.ObjectDetectionStreamer.main()
+                if not GPIO.input(BUTTON_GPIO):
+                    button_press(base_mode)
+                system_ready = True
+            else:
+                base_mode = mode
+                system_ready = False  # Prevent further actions
+                save_image()
+                base64_image = encode_image(image_path)
+                text = text = classify_image(base64_image, api_key, mode)
+                text2speech(text)
+                text2speech(text)
+>>>>>>> Stashed changes
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
