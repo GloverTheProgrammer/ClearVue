@@ -5,6 +5,7 @@ import cv2
 import time
 import RPi.GPIO as GPIO
 from dotenv import load_dotenv
+import OpenAI
 
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
@@ -104,8 +105,19 @@ def classify_image(base64_image, api_key, mode):
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         print(response.json())
+        return response.json()["choices"][0]["message"]["content"][0]
     except Exception as e:
         print(e)
+
+def text2speech(text):
+    client = OpenAI(api_key=api_key)
+    response = client.audio.speech.create(
+    model="tts-1",
+    voice="shimmer", 
+    input=text,
+)
+
+
 
 def main():
     global system_ready
@@ -118,7 +130,8 @@ def main():
             system_ready = False  # Prevent further actions
             save_image()
             base64_image = encode_image(image_path)
-            classify_image(base64_image, api_key, mode)
+            text = classify_image(base64_image, api_key, mode)
+            text2speech(text)
             system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
