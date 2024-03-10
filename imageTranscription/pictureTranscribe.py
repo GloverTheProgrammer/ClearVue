@@ -132,13 +132,11 @@ def main():
     while True:
         if system_ready:
             mode = button_press(base_mode)  # Check for button press or hold
-<<<<<<< Updated upstream
             base_mode = mode
             system_ready = False  # Prevent further actions
             save_image()
             base64_image = encode_image(image_path)
             classify_image(base64_image, api_key, mode)
-=======
             if mode == 3:
                 system_ready = False  # Prevent further actions
                 ObjectDetectionStreamer.ObjectDetectionStreamer.main()
