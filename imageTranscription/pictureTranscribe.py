@@ -157,6 +157,7 @@ def main():
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
                     mode = 0
+                    text2speech("Changed mode to In Front")
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
