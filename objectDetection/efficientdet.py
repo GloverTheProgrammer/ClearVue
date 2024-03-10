@@ -47,7 +47,9 @@ class ObjectDetectionStreamer:
         scores = self.interpreter.get_tensor(self.output_details[2]['index'])[0]
         image = Image.fromarray(frame_small)
         self.draw_boxes_with_labels(image, boxes, classes, scores, self.labels)
-        return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        summary = self.summarize_detected_objects(boxes, classes, scores, self.labels)
+
+        return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR), summary
 
     def start_stream(self):
         cap = cv2.VideoCapture(0)
@@ -58,8 +60,9 @@ class ObjectDetectionStreamer:
                     break
                 for _ in range(self.skip_frames):
                     cap.grab()
-                processed_frame = self.process_frame(frame)
+                processed_frame, summary = self.process_frame(frame)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
+                print(summary)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
         finally:
@@ -86,8 +89,23 @@ class ObjectDetectionStreamer:
             cap.release()
             cv2.destroyAllWindows()
 
+    def summarize_detected_objects(self, boxes, classes, scores, labels):
+        summary = []
+        for box, class_id, score in zip(boxes, classes, scores):
+            if score > 0.5:  # Filter objects with low confidence
+                class_id = int(class_id) + 1  # Adjust class_id to match labels dictionary
+                ymin, xmin, ymax, xmax = box
+                coordinates = f"Coordinates: ({xmin:.2f}, {ymin:.2f}), ({xmax:.2f}, {ymax:.2f})"
+                class_name = labels.get(class_id, "Unknown")
+                rounded_score = round(score, 2)
+                summary.append(f"{class_name} ({rounded_score*100}%), {coordinates}")
+        if summary:
+            return "Detected objects: " + "; ".join(summary)
+        else:
+            return "No objects detected with high confidence."
 
+        
 if __name__ == "__main__":
     model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
-    streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=True)
+    streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=False)
     streamer.start_stream()
