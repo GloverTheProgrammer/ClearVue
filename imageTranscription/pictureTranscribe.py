@@ -50,7 +50,6 @@ def button_press(base_mode):
         else:
             if pressed and not held:
                 print("Pressed" + modes[mode])
-                text2speech("Activated " + modes[mode])
                 return mode
             pressed = False
             held = False
@@ -71,6 +70,7 @@ def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     img_name = os.path.join(directory, "opencv_frame.png")
     cv2.imwrite(img_name, frame)
     print(f"{img_name} written!")
+    text2speech("ClearView")
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
