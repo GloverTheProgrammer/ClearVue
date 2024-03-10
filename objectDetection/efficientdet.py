@@ -308,7 +308,7 @@ class ObjectDetectionStreamer:
                 pygame.time.Clock().tick(10)
         threading.Thread(target=play_audio, args=(file_path,)).start()
 
-    def main(self):
+    def main():
         """
         The main method of the EfficientDet class.
 
