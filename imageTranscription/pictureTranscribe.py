@@ -63,7 +63,7 @@ def encode_image(image_path):
     return encoded_string.decode('utf-8')
 
 
-def classify(base64_image, api_key):
+def story_classify(base64_image, api_key):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}",
@@ -97,10 +97,85 @@ def classify(base64_image, api_key):
     except Exception as e:
         print(e)
 
+def label_classify(base64_image, api_key):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+
+    payload = {
+    "model":"gpt-4-vision-preview",
+    "messages":[
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": "Imagine a revolutionary wearable device designed specifically for the visually impaired—a smart hat equipped with a state-of-the-art camera. This innovative hat is not just a fashion statement; it's a groundbreaking tool that enhances the way visually impaired people interact with the world around them. At the heart of this device is an advanced camera system, discreetly integrated into the hat's design, which scans the wearer's surroundings in real-time. As the user approaches objects, the camera focuses on the nearest labels, from product descriptions at a grocery store to street signs and informational placards, instantly converting the visual data into audible information. This smart hat empowers users with greater independence and confidence, allowing them to navigate public spaces, shop, and explore their environment with an unprecedented level of clarity and ease. Be as concise as possible.",
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+            },
+            },
+        ],
+        }
+    ],
+    "max_tokens" : "300",
+    }
+
+    try:
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        print(response.json())
+    except Exception as e:
+        print(e)
+
+def closest_classify(base64_image, api_key):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+
+    payload = {
+    "model":"gpt-4-vision-preview",
+    "messages":[
+        {
+        "role": "user",
+        "content": [
+            {
+            "type": "text",
+            "text": "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. If present, accurately transcribe text within the image. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves, all while being consise as possible",
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+            },
+            },
+        ],
+        }
+    ],
+    "max_tokens" : "300",
+    }
+
+    try:
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        print(response.json())
+    except Exception as e:
+        print(e)
+
+
+
+
+
+
+
+
 if button_press():
     save_image()
     base64_image = encode_image(image_path)
-    classify(base64_image, api_key)
+    story_classify(base64_image, api_key)
     
 
 
