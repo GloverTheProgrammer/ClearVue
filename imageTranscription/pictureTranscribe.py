@@ -13,30 +13,40 @@ image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 
 system_ready = True
 
+
 def button_press():
     BUTTON_GPIO = 16
-    DELAY = 0.05  # Debounce delay in seconds
-    HOLD_TIME = 2  # Time in seconds to differentiate between press and hold
+    DELAY = 500
+    HOLD = 2200
+
+    start_ms = 0
+    start_press_ms = 0
+
+    mode = 0
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    pressed_time = None
+    pressed = False
+    held = False
 
     while True:
-        if GPIO.input(BUTTON_GPIO) == GPIO.LOW:  # Button is pressed
-            if pressed_time is None:
-                pressed_time = time.time()
-            # Wait for button release or hold time pass
-            while GPIO.input(BUTTON_GPIO) == GPIO.LOW:
-                if (time.time() - pressed_time) > HOLD_TIME:
-                    # Long hold detected
-                    return 'hold'
-            # If the button was released before HOLD_TIME
-            if (time.time() - pressed_time) < HOLD_TIME:
-                return 'press'
-        time.sleep(DELAY)
 
+        if not GPIO.input(BUTTON_GPIO):
+            if not pressed and (time.time() * 1000 - start_ms > DELAY):
+                pressed = True
+                start_ms = time.time() * 1000
+            if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
+                held = True
+                mode = (mode + 1) % 3
+                print("Changed mode to ", mode)
+        else:
+            if pressed and not held:
+                print("pressed")
+                return mode
+            pressed = False
+            held = False
+        time.sleep(0.1)
 
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     cam = cv2.VideoCapture(0)
@@ -97,21 +107,15 @@ def classify_image(base64_image, api_key, mode):
 
 def main():
     global system_ready
-    mode = 0  # Initial mode
 
     while True:
         if system_ready:
-            result = button_press()  # Check for button press or hold
-
-            if result == 'press':  # Quick press detected
-                system_ready = False  # Prevent further actions
-                save_image()
-                base64_image = encode_image(image_path)
-                classify_image(base64_image, api_key, mode)
-                system_ready = True  # Ready for new actions
-            elif result == 'hold':  # Hold detected, change mode
-                mode = (mode + 1) % 3  # Cycle through modes
-                print("Mode changed to:", mode)
+            mode = button_press()  # Check for button press or hold
+            system_ready = False  # Prevent further actions
+            save_image()
+            base64_image = encode_image(image_path)
+            classify_image(base64_image, api_key, mode)
+            system_ready = True  # Ready for new actions
 
 if __name__ == "__main__":
     main()
