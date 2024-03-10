@@ -31,7 +31,7 @@ const AboutUs = () => (
                 <img className="rounded-full" src="profilePics/jaydin_96.png" width={80} height={80} alt="Team Member 02" />
               </div>
             </div>
-            <blockquote className="grow text-xl text-gray-900">   — Spartahacks was undoubtedly my most successful hackathon to date. A huge shoutout to my incredible team; I couldn&apos;t have came close without them.
+            <blockquote className="grow text-xl text-gray-900">   — How quickly things change... GrizzHacks was UNDOUBTEDLY my most successful hackathon to date. Big shoutout to my great Bulldog team; I couldn't have come close without them.
             </blockquote>
             <div className="mt-6 border-t border-gray-700 pt-5 font-medium text-gray-700">
               <cite className="not-italic text-[#84CCBF]">Jaydin F.</cite> - <span className="text-[#F0CD6C]"> Object Detection Dev</span>
