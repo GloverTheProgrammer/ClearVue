@@ -30,16 +30,19 @@ def button_press():
                 pressed_time = time.time()
             elif (time.time() - pressed_time) > HOLD_TIME:
                 # Button has been held down long enough to count as a hold
-                print("Button held. Action initiated for mode:", mode)
-                return (True, mode)  # Return that an action should be initiated for the current mode
+                mode = (mode + 1) % 3
+                print("Button held. Mode changed to:", mode)
+                pressed_time = None  # Reset pressed_time after changing mode
+                return (False, mode)  # No action initiated, only mode changed
         else:
             if pressed_time is not None:
                 if (time.time() - pressed_time) < HOLD_TIME:
-                    # Button was pressed and released before the hold time: change mode
-                    mode = (mode + 1) % 3
-                    print("Mode changed to:", mode)
+                    # Button was pressed and released before the hold time: initiate action
+                    print("Button pressed quickly. Action initiated for mode:", mode)
+                    return (True, mode)  # Action should be initiated for the current mode
                 pressed_time = None  # Reset pressed_time
             time.sleep(DELAY)
+
 
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     cam = cv2.VideoCapture(0)
@@ -104,18 +107,17 @@ def main():
 
     while True:
         if system_ready:
-            action_initiated, mode_received = button_press()  # Check for button action and mode
+            action_initiated, new_mode = button_press()  # Check for button action and mode
 
-            if action_initiated:  # If a hold is detected, classify the image for the current mode
+            if action_initiated:  # If a press is detected, classify the image for the current mode
                 system_ready = False  # Prevent further actions until this one completes
-
                 save_image()
                 base64_image = encode_image(image_path)
                 classify_image(base64_image, api_key, mode)
-
                 system_ready = True  # Ready for a new action
-
-            mode = mode_received  # Update the mode based on the latest button press
+            else:  # Mode changed on hold
+                mode = new_mode  # Update the mode based on the button hold
 
 if __name__ == "__main__":
     main()
+
