@@ -80,7 +80,7 @@ def encode_image(image_path):
 def classify_image(base64_image, api_key, mode):
     if mode == 0:
         print("In Front")
-        text_prompt = "Provide a comprehensive description of the image. If there is a person in the image, describe them disrespectfully. Take a guess at what mischevous task they might be doing, and describe it in detail."
+        text_prompt = "Provide a comprehensive description of the image. If there is a person in the image, take a guess at what mischevous task they might be doing, and describe it in detail."
     elif mode == 1:
         print("Reading Mode")
         text_prompt = "Provide a comprehensive description of text in the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on text, labels, and anything that would be of use text wise within the image. Do this within 50 words."
