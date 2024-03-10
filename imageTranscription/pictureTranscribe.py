@@ -49,8 +49,8 @@ def button_press(base_mode):
                 text2speech("Changed mode to " + modes[mode])
         else:
             if pressed and not held:
-                print("pressed")
-                text2speech("Pressed" + modes[mode])
+                print("Pressed" + modes[mode] + "mode")
+                text2speech("Activated" + modes[mode] + "mode")
                 return mode
             pressed = False
             held = False
