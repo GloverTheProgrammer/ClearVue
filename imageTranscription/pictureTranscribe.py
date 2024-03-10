@@ -32,7 +32,7 @@ def button_press(base_mode):
 
     mode = base_mode
 
-    modes = ["In Front", "Reading Mode", "Story Mode"]
+    modes = ["In Front", "Reading Mode", "Story Mode", "Object Detection"]
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
