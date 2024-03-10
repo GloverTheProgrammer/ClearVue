@@ -41,6 +41,3 @@ For more details and to see our work in action, visit our landing page repositor
 
 © Copyright 2024 ClearVue. All rights reserved.
 
----
-
-This README template is designed to clearly communicate the purpose, features, and team behind ClearVue. You can replace placeholder links with actual URLs to your images and GitHub repository to make this document fully functional.
