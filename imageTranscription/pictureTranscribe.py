@@ -161,7 +161,7 @@ def main():
                 finally:
                     system_ready = True  # Ensure system_ready is reset even if exited
                     if not GPIO.input(BUTTON_GPIO):
-                        button_press(base_mode)
+                        mode = button_press(base_mode)
             else:
                 base_mode = mode
                 system_ready = False  # Prevent further actions
