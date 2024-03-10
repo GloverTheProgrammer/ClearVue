@@ -1,16 +1,42 @@
+from objectDetection.labels import classes
+import objectDetection.efficientdet as ObjectDetectionStreamer
 from collections import Counter
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
-from labels import classes
 from gtts import gTTS
 import pygame
 import pygame.mixer
 import tempfile
 from gtts import gTTS
-from threading import Thread
+import threading
 import time
+import RPi.GPIO as GPIO
+
+import os
+import sys
+project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_dir)
+
+stream_stop_event = threading.Event()
+
+def monitor_button():
+    BUTTON_GPIO = 16
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    while True:
+        if not GPIO.input(BUTTON_GPIO):  # Button is pressed
+            print("Button pressed, exiting.")
+            return
+        time.sleep(0.1)  # Debounce delay
+
+def button_press():
+    monitor_button_thread = threading.Thread(target=monitor_button)
+    monitor_button_thread.start()
+    monitor_button_thread.join()
+    stream_stop_event.set()
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False, text_to_speech=False):
@@ -69,6 +95,7 @@ class ObjectDetectionStreamer:
         return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR), summary
 
     def start_stream(self):
+        global stream_stop_event
         cap = cv2.VideoCapture(0)
         try:
             while True:
@@ -80,7 +107,7 @@ class ObjectDetectionStreamer:
                 processed_frame, summary = self.process_frame(frame)
                 print(summary)
                 cv2.imshow('Video with Boxes and Labels', processed_frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
+                if cv2.waitKey(1) & 0xFF == ord('q') or stream_stop_event.is_set():
                     break
                 if not self.text_to_speech:
                     continue
@@ -90,6 +117,7 @@ class ObjectDetectionStreamer:
         finally:
             cap.release()
             cv2.destroyAllWindows()
+            stream_stop_event.clear()
 
     def take_picture(self, warmup_frames=30):
         cap = cv2.VideoCapture(0)
@@ -131,7 +159,8 @@ class ObjectDetectionStreamer:
         object_names = Counter([name for name, _ in current_objects])
 
         if object_names:
-            details = ', '.join([f"{count} {name}{'s' if count > 1 else ''}" for name, count in object_names.items()])
+            details = ', '.join(
+                [f"{count} {name}{'s' if count > 1 else ''}" for name, count in object_names.items()])
             message = f"In view: {details}."
         else:
             return
@@ -154,11 +183,18 @@ class ObjectDetectionStreamer:
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pygame.time.Clock().tick(10)
-        Thread(target=play_audio, args=(file_path,)).start()
+        threading.Thread(target=play_audio, args=(file_path,)).start()
+
+    def main():
+        button_thread = threading.Thread(target=button_press)
+        button_thread.start()
+        model_path = os.path.join(
+            project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
+        streamer = ObjectDetectionStreamer(
+            model_path=model_path, flip_camera=True, text_to_speech=True)
+        streamer.start_stream()
+        button_thread.join()
 
 
 if __name__ == "__main__":
-    model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
-    streamer = ObjectDetectionStreamer(
-        model_path=model_path, flip_camera=True, text_to_speech=True)
-    streamer.start_stream()
+    ObjectDetectionStreamer.main()

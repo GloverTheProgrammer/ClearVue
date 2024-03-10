@@ -10,3 +10,9 @@ transformers
 tensorflow
 gTTS
 pygame
+python-dotenv
+openai
+sounddevice
+soundfile
+gTTS
+pygame
