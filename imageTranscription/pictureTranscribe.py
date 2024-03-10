@@ -48,7 +48,7 @@ def button_press(base_mode):
                 start_ms = time.time() * 1000
             if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
                 held = True
-                mode = (mode + 1) % 3
+                mode = (mode + 1) % len(modes)
                 print("Changed mode to ", mode)
                 text2speech("Changed mode to " + modes[mode])
         else:
