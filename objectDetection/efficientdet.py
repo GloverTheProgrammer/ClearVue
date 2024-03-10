@@ -12,7 +12,9 @@ from threading import Thread
 import time
 
 import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_dir)
+
 import objectDetection.efficientdet as ObjectDetectionStreamer
 from objectDetection.labels import classes
 
@@ -163,11 +165,9 @@ class ObjectDetectionStreamer:
 
 
     def main():
-        model_path = "../objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
-        tts = gTTS(text="Object Detection Mode", lang='en')
-        tts.save("objectDetection/starting.mp3")
+        model_path = os.path.join(project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
         pygame.mixer.init()
-        pygame.mixer.music.load("objectDetection/starting.mp3")
+        pygame.mixer.music.load("starting.mp3")
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
