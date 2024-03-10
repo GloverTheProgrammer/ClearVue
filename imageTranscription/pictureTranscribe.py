@@ -10,14 +10,10 @@ import sounddevice as sd
 import soundfile as sf
 import base64
 
-import os, sys
+import os
+import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import objectDetection.efficientdet as ObjectDetectionStreamer
-from openai import OpenAI
-import sounddevice as sd
-import soundfile as sf
-import base64
-
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
 
@@ -63,6 +59,7 @@ def button_press(base_mode):
             held = False
         time.sleep(0.1)
 
+
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     cam = cv2.VideoCapture(0)
     if not cam.isOpened():
@@ -80,10 +77,12 @@ def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     print(f"{img_name} written!")
     text2speech("ClearView")
 
+
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
     return encoded_string.decode('utf-8')
+
 
 def classify_image(base64_image, api_key, mode):
     if mode == 0:
@@ -119,7 +118,8 @@ def classify_image(base64_image, api_key, mode):
     }
 
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         textjson = response.json()
         text = textjson['choices'][0]['message']['content']
         print(text)
@@ -127,20 +127,19 @@ def classify_image(base64_image, api_key, mode):
     except Exception as e:
         print(e)
 
+
 def text2speech(text):
     client = OpenAI(api_key=api_key)
     response = client.audio.speech.create(
-    model="tts-1",
-    voice="shimmer", 
-    input=text,
-)
+        model="tts-1",
+        voice="shimmer",
+        input=text,
+    )
     speech_path = "/home/blackhat/Desktop/transcribe/speech.mp3"
     response.stream_to_file(speech_path)
-    audio_data,sample_rate = sf.read(speech_path)
-    sd.play(audio_data,sample_rate)
+    audio_data, sample_rate = sf.read(speech_path)
+    sd.play(audio_data, sample_rate)
     sd.wait()
-
-    
 
 
 def main():
@@ -164,6 +163,6 @@ def main():
                 text2speech(text)
             system_ready = True  # Ready for new actions
 
+
 if __name__ == "__main__":
     main()
-
