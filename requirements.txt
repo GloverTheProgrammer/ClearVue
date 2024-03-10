@@ -9,4 +9,4 @@ numpy
 transformers
 tensorflow
 gTTS
-playsound
+pygame
