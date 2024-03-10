@@ -35,7 +35,7 @@ Globally, an estimated 40 to 45 million people are blind, and 135 million have l
 
 ## Explore Our Project
 
-For more details and to see our work in action, visit our Website repository:
+For more details and to see our work in action, visit our landing page repository:
 
 [ClearVue Landing Page](https://clearvue.tech)
 
