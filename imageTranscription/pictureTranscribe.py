@@ -107,6 +107,7 @@ def classify_image(base64_image, api_key, mode):
         words = resp['choices'][0]['message']['content']
         print(words)
         engine = pyttsx3.init()
+        engine.setProperty('rate', 125)
         engine.say(words)
         engine.runAndWait()
     except Exception as e:
