@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 import tensorflow as tf
-from Object_Detection.labels import classes
+from labels import classes
 
 class ObjectDetectionStreamer:
     def __init__(self, model_path, frame_resize_dims=(320, 320), skip_frames=10, flip_camera=False):
@@ -88,6 +88,6 @@ class ObjectDetectionStreamer:
 
 
 if __name__ == "__main__":
-    model_path = "models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
+    model_path = "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite"
     streamer = ObjectDetectionStreamer(model_path=model_path, flip_camera=True)
     streamer.start_stream()
