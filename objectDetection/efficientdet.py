@@ -167,7 +167,7 @@ class ObjectDetectionStreamer:
     def main():
         model_path = os.path.join(project_dir, "objectDetection/models/lite-model/lite-model_efficientdet_lite0_detection_metadata_1.tflite")
         pygame.mixer.init()
-        pygame.mixer.music.load("starting.mp3")
+        pygame.mixer.music.load(os.path.join(project_dir, "objectDetection/starting.mp3"))
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
