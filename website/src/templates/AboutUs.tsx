@@ -17,10 +17,10 @@ const AboutUs = () => (
               <img className="rounded-full" src="profilePics/david_96.png" width={80} height={80} alt="Team Member 01" />
               </div>
           </div>
-          <blockquote className="grow text-xl text-gray-900">   — GrizzHacks is an amazing experience! I learned a ton about new frameworks and technologies along with my amazing team. We are the best no doubt!
+          <blockquote className="grow text-xl text-gray-900">   — GrizzHacks was amazing! I loved learning with the guys at Oakland University. We worked hard and very efficiently to make an excellent product. Go Bulldogs!
           </blockquote>
           <div className="mt-6 border-t border-gray-700 pt-5 font-medium text-gray-700">
-            <cite className="not-italic text-[#84CCBF]">David G.</cite> - <span className="text-[#F0CD6C]">Objecct Detection Dev</span>
+            <cite className="not-italic text-[#84CCBF]">David G.</cite> - <span className="text-[#F0CD6C]">Object Detection Dev</span>
           </div>
         </div>
   
