@@ -28,6 +28,8 @@ def button_press(base_mode):
 
     mode = base_mode
 
+    modes = ["In Front", "Reading Mode", "Story Mode"]
+
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -44,7 +46,7 @@ def button_press(base_mode):
                 held = True
                 mode = (mode + 1) % 3
                 print("Changed mode to ", mode)
-                text2speech("Changed mode to " + str(mode))
+                text2speech("Changed mode to " + modes[mode])
         else:
             if pressed and not held:
                 print("pressed")
@@ -76,12 +78,13 @@ def encode_image(image_path):
 
 def classify_image(base64_image, api_key, mode):
     if mode == 0:
-        print("Closest Mode")
+        print("In Front")
         text_prompt = "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves, all within a concise limit of 15 words."
     elif mode == 1:
         print("Reading Mode")
         text_prompt = "Provide a comprehensive description of text in the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on text, labels, and anything that would be of use text wise within the image. Do this within 50 words."
     elif mode == 2:
+        print("Story Mode")
         text_prompt = "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. If present, accurately transcribe text within the image. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves, all while being consise as possible"
 
     payload = {
