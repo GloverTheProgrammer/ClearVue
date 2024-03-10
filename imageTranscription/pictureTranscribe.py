@@ -32,16 +32,21 @@ def button_press():
                 # Button has been held down long enough to count as a hold
                 mode = (mode + 1) % 3
                 print("Button held. Mode changed to:", mode)
+                # Wait for the button to be released to avoid quick press action immediately after
+                while GPIO.input(BUTTON_GPIO) == GPIO.LOW:
+                    time.sleep(DELAY)
                 pressed_time = None  # Reset pressed_time after changing mode
                 return (False, mode)  # No action initiated, only mode changed
         else:
             if pressed_time is not None:
-                if (time.time() - pressed_time) < HOLD_TIME:
+                elapsed_time = time.time() - pressed_time
+                if elapsed_time < HOLD_TIME:
                     # Button was pressed and released before the hold time: initiate action
                     print("Button pressed quickly. Action initiated for mode:", mode)
                     return (True, mode)  # Action should be initiated for the current mode
-                pressed_time = None  # Reset pressed_time
+                pressed_time = None  # Reset pressed_time for both quick press and after button release
             time.sleep(DELAY)
+
 
 
 def save_image(directory="/home/blackhat/Desktop/transcribe/"):
