@@ -108,7 +108,6 @@ def classify_image(base64_image, api_key, mode):
         text = textjson["choices"]["message"]["content"]
         for char in text:
             print(char, end="", flush=True)
-        return text
     except Exception as e:
         print(e)
 
