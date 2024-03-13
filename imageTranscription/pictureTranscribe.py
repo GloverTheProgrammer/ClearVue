@@ -3,7 +3,7 @@ import base64
 import requests
 import cv2
 import time
-import RPi.GPIO as GPIO
+import gpiod
 from dotenv import load_dotenv
 from openai import OpenAI
 import sounddevice as sd
@@ -22,41 +22,42 @@ image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
 system_ready = True
 
 
+
+
 def button_press(base_mode):
     BUTTON_GPIO = 16
-    DELAY = 500
-    HOLD = 2200
-
-    start_ms = 0
-    start_press_ms = 0
+    DELAY = 0.5  # Seconds
+    HOLD = 2.2  # Seconds
+    modes = ["In Front", "Reading Mode", "Story Mode", "Object Detection Mode"]
+    chip = gpiod.Chip('gpiochip0')
+    line = chip.get_line(BUTTON_GPIO)
+    line.request(consumer='button_press', type=gpiod.LINE_REQ_DIR_IN, flags=gpiod.LINE_REQ_EV_BOTH_EDGES)
 
     mode = base_mode
-
-    modes = ["In Front", "Reading Mode", "Story Mode", "Object Detection Mode"]
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BUTTON_GPIO, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
     pressed = False
     held = False
+    start_ms = 0
 
     while True:
-
-        if not GPIO.input(BUTTON_GPIO):
-            if not pressed and (time.time() * 1000 - start_ms > DELAY):
-                pressed = True
-                start_ms = time.time() * 1000
-            if pressed and not held and (time.time() * 1000 - start_ms > HOLD):
-                held = True
-                mode = (mode + 1) % len(modes)
-                print("Changed mode to ", mode)
-                text2speech("Changed mode to " + modes[mode])
-        else:
-            if pressed and not held:
-                print("Pressed " + modes[mode])
-                return mode
-            pressed = False
-            held = False
+        event = line.event_wait(sec=DELAY)
+        if event:
+            event_read = line.event_read()
+            if event_read.event_type == gpiod.LineEvent.FALLING_EDGE:
+                if not pressed:
+                    pressed = True
+                    start_ms = time.time()
+                while not line.get_value():
+                    if not held and (time.time() - start_ms > HOLD):
+                        held = True
+                        mode = (mode + 1) % len(modes)
+                        print("Changed mode to", modes[mode])
+                        # text2speech("Changed mode to " + modes[mode])
+            else:  # Rising edge
+                if pressed and not held:
+                    print("Pressed", modes[mode])
+                    return mode
+                pressed = False
+                held = False
         time.sleep(0.1)
 
 
