@@ -8,7 +8,7 @@ const VerticalFeatures = () => (
     regain the ability to live thier every-day lives!"
   >
   <center>
-  <video src='videos/demo.mp4' width="800" height="400" controls />
+  <video src='videos/demo2.mp4' width="800" height="400" controls />
   </center>
     <VerticalFeatureRow
       title="In Front"
