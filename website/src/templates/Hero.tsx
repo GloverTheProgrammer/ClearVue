@@ -26,11 +26,6 @@ const Hero = () => (
           </>
         }
         description="Enabling the visually impaired to see"
-        button={
-          <Link href="https://github.com/GloverTheProgrammer/ClearVue">
-            <Button xl>View our GitHub!</Button>
-          </Link>
-        }
       />
     </Section>
   </Background>

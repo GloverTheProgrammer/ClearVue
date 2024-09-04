@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 type IHeroOneButtonProps = {
   title: ReactNode;
   description: string;
-  button: ReactNode;
 };
 
 const HeroOneButton = (props: IHeroOneButtonProps) => (
@@ -12,8 +11,6 @@ const HeroOneButton = (props: IHeroOneButtonProps) => (
       {props.title}
     </h1>
     <div className="mb-16 mt-4 text-2xl">{props.description}</div>
-
-    {props.button}
   </header>
 );
 
