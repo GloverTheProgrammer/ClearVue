@@ -12,7 +12,8 @@ import tempfile
 from gtts import gTTS
 import threading
 import time
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
+import testRPiGPIO as GPIO
 
 import os
 import sys

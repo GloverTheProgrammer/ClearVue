@@ -1,3 +1,5 @@
-
-
 imageTranscription/.gitignore
+.DS_Store
+.env
+*.pyc
+*.png

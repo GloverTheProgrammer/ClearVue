@@ -3,7 +3,8 @@ import base64
 import requests
 import cv2
 import time
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
+import testRPiGPIO as GPIO
 from dotenv import load_dotenv
 from openai import OpenAI
 import sounddevice as sd
@@ -17,7 +18,7 @@ import objectDetection.efficientdet as ObjectDetectionStreamer
 load_dotenv()  # Loads the .env file into environment variables
 api_key = os.getenv('OPENAI_API_KEY')
 
-image_path = "/home/blackhat/Desktop/transcribe/opencv_frame.png"
+image_path = "opencv_frame.png"
 
 system_ready = True
 
@@ -59,11 +60,12 @@ def button_press(base_mode):
             held = False
         time.sleep(0.1)
 
-
-def save_image(directory="/home/blackhat/Desktop/transcribe/"):
+def save_image(directory="."):
     cam = cv2.VideoCapture(0)
     if not cam.isOpened():
         raise IOError("Cannot open webcam")
+    
+    time.sleep(1)
 
     ret, frame = cam.read()
     cam.release()
@@ -74,7 +76,7 @@ def save_image(directory="/home/blackhat/Desktop/transcribe/"):
     frame = cv2.rotate(frame, cv2.ROTATE_180)
     img_name = os.path.join(directory, "opencv_frame.png")
     cv2.imwrite(img_name, frame)
-    print(f"{img_name} written!")
+    print(f"{img_name} written to {directory}")
     text2speech("ClearView")
 
 
@@ -96,7 +98,7 @@ def classify_image(base64_image, api_key, mode):
         text_prompt = "Provide a comprehensive description of the image, without mentioning its a photograph or scene to the user, for a visually impaired person, focusing on identifying key objects, characters, and any text, including their arrangement and interactions within the scene. Describe the setting, atmosphere, and highlight any notable emotional or thematic elements. Include details on colors, shapes, and textures to enrich the description. If present, accurately transcribe text within the image. This description should help a visually impaired individual visualize the content and context as if they were seeing it themselves. Do this within 75 words."
 
     payload = {
-        "model": "gpt-4-vision-preview",
+        "model": "gpt-4o-mini",
         "messages": [{
             "role": "user",
             "content": [{
@@ -135,7 +137,7 @@ def text2speech(text):
         voice="shimmer",
         input=text,
     )
-    speech_path = "/home/blackhat/Desktop/transcribe/speech.mp3"
+    speech_path = "speech.mp3"
     response.stream_to_file(speech_path)
     audio_data, sample_rate = sf.read(speech_path)
     sd.play(audio_data, sample_rate)
